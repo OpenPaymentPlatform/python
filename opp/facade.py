@@ -302,7 +302,7 @@ class ShippingAddress(object):
 
 
 class Item(object):
-    def __init__(self, name=None, merchant_item_id=None, quantity=None, type=None, price=None, currency=None,
+    def __init__(self, name=None, merchant_item_id=None, quantity=None, item_type=None, price=None, currency=None,
                  description=None, tax=None, shipping=None, discount=None):
         """
 
@@ -311,7 +311,7 @@ class Item(object):
         :param name:
         :param merchant_item_id:
         :param quantity:
-        :param type:
+        :param item_type:
         :param price:
         :param currency:
         :param description:
@@ -322,7 +322,7 @@ class Item(object):
         self.name = name
         self.merchant_item_id = merchant_item_id
         self.quantity = quantity
-        self.type = type
+        self.item_type = item_type
         self.price = price
         self.currency = currency
         self.description = description
@@ -334,7 +334,7 @@ class Item(object):
         return {"name": self.name,
                 "merchantItemId": self.merchant_item_id,
                 "quantity": self.quantity,
-                "type": self.type,
+                "type": self.item_type,
                 "price": self.price,
                 "currency": self.currency,
                 "description": self.description,
@@ -346,7 +346,7 @@ class Item(object):
     def from_params(params):
         if params is not None:
             return Item(name=params.get('name'), merchant_item_id=params.get('merchantItemId'),
-                        quantity=params.get('quantity'), type=params.get('type'), price=params.get('price'),
+                        quantity=params.get('quantity'), item_type=params.get('type'), price=params.get('price'),
                         currency=params.get('currency'), description=params.get('description'), tax=params.get('tax'),
                         shipping=params.get('shipping'), discount=params.get('discount'))
 
@@ -394,17 +394,17 @@ class TokenizationAndRegistration(object):
 
 
 class Recurring(object):
-    def __init__(self, type=None):
+    def __init__(self, recurr_type=None):
         """
 
 
         :rtype : object
-        :param type:
+        :param recurr_type:
         """
-        self.type = type
+        self.recurr_type = recurr_type
 
     def to_params(self):
-        return {"recurringType": self.type}
+        return {"recurringType": self.recurr_type}
 
 
 class ThreeDSecure(object):
@@ -435,12 +435,12 @@ class CustomParameters(object):
         :param name:
         """
         for key, value in kwargs.iteritems():
-            self.key = value
+            self.__dict__.update({key: value})
 
     def to_params(self):
         params = {}
         for key, value in self.__dict__.iteritems():
-            params.update({"customParameters[{0}]".format(key): value})
+            params.update({"customParameters[SHOPPER_{0}]".format(key): value})
         return params
 
 
