@@ -1,20 +1,10 @@
 # coding=utf-8
 __author__ = 'PAY.ON'
 from requests import Session
-import logging
 import opp.config
-# these two lines enable debugging at httplib level (requests->urllib3->httplib)
-# you will see the REQUEST, including HEADERS and DATA, and RESPONSE with HEADERS but without DATA.
-# the only thing missing will be the response.body which is not logged.
 from six.moves import http_client
 
-http_client.HTTPConnection.debuglevel = 1
-
-logging.basicConfig()  # you need to initialize logging, otherwise you will not see anything from requests
-logging.getLogger().setLevel(logging.INFO)
-requests_log = logging.getLogger("requests.packages.urllib3")
-requests_log.setLevel(logging.DEBUG)
-requests_log.propagate = True
+http_client.HTTPConnection.debuglevel = opp.config.HTTP_DEBUG_MODE
 
 
 class Utils(object):
