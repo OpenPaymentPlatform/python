@@ -3,6 +3,9 @@ __author__ = 'PAY.ON'
 from requests import Session
 import opp.config
 from six.moves import http_client
+import logging
+
+logger = logging.getLogger(__name__)
 
 http_client.HTTPConnection.debuglevel = opp.config.HTTP_DEBUG_MODE
 
@@ -96,10 +99,11 @@ class API(object):
 class HTTPClient(object):
     def __init__(self, base_url, auth_params):
         """Initialize a new opp connection. Requires user name and password."""
+        logger.debug("START: OPP API connection with BASE_URL:{0} and AUTH_PARAMS: {1}".format(base_url,
+                                                                                               auth_params))
         self.base_url = base_url
         self.session = Session()
         self.session.verify = opp.config.config.ssl_verify
-        # self.session.auth = (user_name, "")
         self.auth_params = auth_params
         self.operations = dict(GET=self.get, POST=self.post, PUT=self.put, DELETE=self.delete)
         # for internal usage
@@ -123,9 +127,14 @@ class HTTPClient(object):
         if self.auth_params:
             params.update(self.auth_params)
         try:
-            return self.operations[request_type](params, url, return_type)
+            result = self.operations[request_type](params, url, return_type)
+            logger.debug("SUCCESS: OPP API REQUEST_TYPE {0} with PARAMS:{1} -> RESPONSE: {2} ".format(request_type,
+            return result
         except ValueError as v:
             # JSON encoding failed
+            logger.debug("ERROR: OPP API REQUEST_TYPE {0} with PARAMS {1} -> RESPONSE {2} TRACE {3}".
+                         format(request_type, params, self.response, v))
+
             if self.response is not None:
                 raise ValueError(self.response.content, self.response.status_code)
             else:
