@@ -372,7 +372,6 @@ class Cart(object):
                 item = Item.from_params(param)
                 if item is not None:
                     items.append(item)
-
             return Cart(items=items)
 
 
@@ -514,7 +513,6 @@ class Redirect(object):
                 parameter = Parameter.from_params(param)
                 if parameter is not None:
                     parameters_list.append(parameter)
-
             return Redirect(url=params.get('url'), parameters=parameters_list)
 
 
@@ -538,7 +536,7 @@ class ResponseParameters(object):
         self.shipping_address = shipping_address
         self.cart = cart
         self.merchant = merchant
-        self.async_payments = redirect
+        self.redirect = redirect
         self.timestamp = timestamp
         self.build_number = build_number
         self.ndc = ndc
@@ -550,7 +548,7 @@ class ResponseParameters(object):
             id = params.get('id')
             payment_type = params.get('paymentType')
             payment_brand = params.get('paymentBrand')
-            amount = params.get('paymentType')
+            amount = params.get('amount')
             currency = params.get('currency')
             descriptor = params.get('descriptor')
             # nested objects
@@ -558,10 +556,10 @@ class ResponseParameters(object):
             card_account = CardAccount.from_params(params.get('cardAccount'))
             virtual_account = VirtualAccount.from_params(params.get('virtualAccount'))
             bank_account = BankAccount.from_params(params.get('bankAccount'))
-            customer = Customer.from_params(params.get('customer')),
+            customer = Customer.from_params(params.get('customer'))
             billing_address = BillingAddress.from_params(params.get('billing'))
             shipping_address = ShippingAddress.from_params(params.get('shipping'))
-            cart = Cart.from_params(params.get('cart'))
+            cart = Cart.from_params(params.get('cart').get('items'))
             merchant = Merchant.from_params(params.get('merchant'))
             redirect = Redirect.from_params(params.get('redirect'))
             timestamp = params.get('timestamp')
