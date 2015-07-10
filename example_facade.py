@@ -1,15 +1,16 @@
-import opp
-
 __author__ = 'PAY.ON'
-# change module name, package, project
-#use opp instead
+import opp
+import logging
+logging.basicConfig(level=logging.DEBUG, filename='opp.log')
+logger = logging.getLogger(__name__)
 
-# create authentication object
+logger.info(('Example facade logging level {0} logs to file {1}'.format(logging.DEBUG, 'opp.log')))
 
+logger.debug('Creating facade objects...')
 authentication = opp.facade.Authentication(user_id='8a8294174b7ecb28014b9699220015cc', password='sy6KJsT8',
                                            entity_id='8a8294174b7ecb28014b9699220015ca')
 
-# initialize Payon Api with authentication object and mode
+# initialize OPP API with authentication object
 api = opp.facade.API(authentication)
 
 # create payment parameters
@@ -19,42 +20,26 @@ basic_payment = opp.facade.BasicPayment(amount='92.00', currency='EUR', payment_
 card_account = opp.facade.CardAccount(holder='Jane Jones', number='377777777777770', expiry_month='05',
                                       expiry_year='2018',
                                       cvv='1234')
+preauthorization = None
 
 try:
     # create preauthorization
-    preauthorization1 = api.preauthorizations().create(basic_payment, card_account)
-    if preauthorization1 is not None:
-        print(preauthorization1)
-        print(type(preauthorization1))
-        print("---------------------Preauth Object Response-------------------")
-        print("---------------------Object Dict-------------------------------")
-        print(preauthorization1.__dict__)
-        print("---------------------Object Nested Object-------------------------------")
-        print(preauthorization1.result)
-        print("---------------------Object Nested Object Property-------------------------------")
-        print(preauthorization1.result.code)
-
+    logger.info('Calling opp.facade.API.preauthorizations().create ...')
+    preauthorization = api.preauthorizations().create(basic_payment, card_account)
+    logger.debug('Result from opp.facade.API.preauthorizations().create: result.code: %s result.description: %s',
+                 preauthorization.result.code, preauthorization.result.description)
 except opp.facade.ApiError as e:
     #handle error
     print(e)
 
-try:
-    # create transaction
-    transaction1 = api.debits().create(basic_payment, card_account)
-    if transaction1 is not None:
-        print("---------------------Transaction Response-------------------")
-        print(transaction1)
-except opp.facade.ApiError as e:
-    #handle error
-    print(e)
+if preauthorization is not None:
+    try:
+        # create transaction by capturing preauthorization
+        logger.info('Calling captures(payment_id=preauthorization.id).create() ...')
+        transaction = api.captures(payment_id=preauthorization.id).create(basic_payment)
+        logger.debug('Result from captures(payment_id=preauthorization.id).create(): result.code: %s '
+                     'result.description: %s', preauthorization.result.code, preauthorization.result.description)
+    except opp.facade.ApiError as e:
+        #handle error
+        print(e)
 
-try:
-    # create capture with risk check
-    cap1 = api.risk_checked_captures().create(basic_payment, card_account)
-    print("---------------------Capture Response-------------------")
-    print(cap1)
-    print(cap1.__dict__)
-
-except opp.facade.ApiError as e:
-    #handle error
-    print(e)
