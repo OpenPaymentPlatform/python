@@ -181,7 +181,7 @@ class TestFromParams(unittest.TestCase):
     def test_merchant_from_params(self):
         bank_account_parameters = {"bankAccount": {"holder": "Jane Jones",
                                                    "number": "1009534785",
-                                                   "iban": "TRUE",
+                                                   "iban": "DE23100000001234567890",
                                                    "country": "DE"
                                                    }
                                    }
