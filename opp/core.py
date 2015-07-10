@@ -99,8 +99,7 @@ class API(object):
 class HTTPClient(object):
     def __init__(self, base_url, auth_params):
         """Initialize a new opp connection. Requires user name and password."""
-        logger.debug("START: OPP API connection with BASE_URL:{0} and AUTH_PARAMS: {1}".format(base_url,
-                                                                                               auth_params))
+        logger.debug("START: OPP API connection with BASE_URL: {0}".format(base_url))
         self.base_url = base_url
         self.session = Session()
         self.session.verify = opp.config.config.ssl_verify
@@ -128,14 +127,11 @@ class HTTPClient(object):
             params.update(self.auth_params)
         try:
             result = self.operations[request_type](params, url, return_type)
-            logger.debug("SUCCESS: OPP API REQUEST_TYPE {0} with PARAMS:{1} -> RESPONSE: {2} ".format(request_type,
-                                                                                                      params,
-                                                                                                      self.response))
+            logger.debug("SUCCESS: {0} {1}".format(request_type, url))
             return result
         except ValueError as v:
             # JSON encoding failed
-            logger.debug("ERROR: OPP API REQUEST_TYPE {0} with PARAMS {1} -> RESPONSE {2} TRACE {3}".
-                         format(request_type, params, self.response, v))
+            logger.debug("ERROR: {0} {1}".format(request_type, url))
 
             if self.response is not None:
                 raise ValueError(self.response.content, self.response.status_code)
@@ -210,13 +206,10 @@ class HTTPClient(object):
         if json_data:
             # success
             if isinstance(json_data, dict):
-                logger.debug("JSON->Python DESERIALIZATION FROM {0} TO {1}".format(json_data, dict(json_data)))
                 return dict(json_data)
             elif isinstance(json_data, list):
-                logger.debug("JSON->Python DESERIALIZATION FROM {0} TO {1}".format(json_data, list(json_data)))
                 return list(json_data)
             else:
-                logger.debug("JSON->Python DESERIALIZATION FROM {0} TO {1}".format(json_data, str(json_data)))
                 return str(json_data)
         else:
             # error
