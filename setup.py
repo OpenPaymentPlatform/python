@@ -1,6 +1,14 @@
 # coding=utf-8
 __author__ = 'PAY.ON'
+import sys
+
+if sys.version_info <= (3, 4):
+    install_requires = ['requests', 'six', 'pyopenssl', 'ndg-httpsclient', 'pyasn1']
+else:
+    install_requires = ['requests >= 2.5.3', 'six >= 1.9.0']
+
 from setuptools import setup
+
 setup(
     name='opp',
     version='0.9.0',
@@ -21,6 +29,6 @@ setup(
         'Topic :: Internet :: WWW/HTTP',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
-    install_requires=['requests >= 2.5.3', 'six >= 1.9.0', 'requests[security]'],
+    install_requires=install_requires,
     download_url='https://github.com/OpenPaymentPlatform/python/tarball/0.9'
 )
