@@ -8,7 +8,7 @@ import tests.test_data_utils
 import opp.facade
 
 
-class TestsFacade(unittest.TestCase):
+class TestToParams(unittest.TestCase):
     def test_authentication_to_params(self):
         expected_parameters = tests.test_data_utils.authentication
         result_parameters = opp.facade.Authentication(user_id="8a8294174b7ecb28014b9699220015cc", password="sy6KJsT8",
@@ -118,11 +118,6 @@ class TestsFacade(unittest.TestCase):
         self.assertEqual(expected_parameters, result_parameters)
 
     def test_cart_to_params(self):
-        item_object = opp.facade.Item(name="T-shirt", merchant_item_id="1a2b3c4d5e6f7g8h9i", quantity="1",
-                                      type="XL",
-                                      price="5", currency="EUR",
-                                      description="Summer", tax="0.25", shipping="1",
-                                      discount="5")
         expected_parameters = {"cart.items[0].name": "T-shirt",
                                "cart.items[0].merchantItemId": "1a2b3c4d5e6f7g8h9i",
                                "cart.items[0].quantity": "1",
@@ -133,7 +128,43 @@ class TestsFacade(unittest.TestCase):
                                "cart.items[0].tax": "0.25",
                                "cart.items[0].shipping": "1",
                                "cart.items[0].discount": "5"}
+        item_object = opp.facade.Item(name="T-shirt", merchant_item_id="1a2b3c4d5e6f7g8h9i", quantity="1",
+                                      type="XL",
+                                      price="5", currency="EUR",
+                                      description="Summer", tax="0.25", shipping="1",
+                                      discount="5")
         list_of_items = [item_object]
         result_parameters = opp.facade.Cart(list_of_items).to_params()
+        self.assertEqual(expected_parameters, result_parameters)
 
+    def test_tokenization_and_registration_to_params(self):
+        expected_parameters = {"createRegistration": "true"}
+        result_parameters = opp.facade.TokenizationAndRegistration(create_registration="true").to_params()
+        self.assertEqual(expected_parameters, result_parameters)
+
+    def test_recurring_to_params(self):
+        expected_parameters = {"recurringType": "INITIAL"}
+        result_parameters = opp.facade.Recurring(type="INITIAL").to_params()
+        self.assertEqual(expected_parameters, result_parameters)
+
+    def test_threed_secure_to_params(self):
+        expected_parameters = {"threeDSecure.eci": "07",
+                               "threeDSecure.verificationId": "dGVzdF92ZXJpZmljYXRpb25faWQ=",
+                               "threeDSecure.xid": "dGVzdF94aWQ="
+                               }
+        result_parameters = opp.facade.ThreeDSecure(eci="07", verification_id="dGVzdF92ZXJpZmljYXRpb25faWQ=", xid="dGVzdF94aWQ=").to_params()
+        self.assertEqual(expected_parameters, result_parameters)
+
+    def test_custom_parameters_to_params(self):
+        expected_parameters = {"customParameters[SHOPPER_number_of_installments]": "3",
+                               "customParameters[SHOPPER_trial_period_days]": "10"
+                               }
+        result_parameters = opp.facade.CustomParameters(number_of_installments='3', trial_period_days='10').to_params()
+        self.assertEqual(expected_parameters, result_parameters)
+
+    def test_asynchronous_payments_to_params(self):
+        expected_parameters = {"shopperResultUrl": "http://shopperurl.com",
+                               "notificationUrl": "http://notificationurl.com"
+                               }
+        result_parameters = opp.facade.AsynchronousPayments(shopper_result_url="http://shopperurl.com", notification_url="http://notificationurl.com").to_params()
         self.assertEqual(expected_parameters, result_parameters)

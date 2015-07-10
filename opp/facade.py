@@ -111,7 +111,7 @@ class VirtualAccount(object):
 
 class BankAccount(object):
     def __init__(self, holder=None, bank_name=None, number=None, iban=None, bank_code=None, bic=None, country=None,
-                 mandate_id=None, mandate_date_of_signature=None, transaction_due_date=None):
+                 mandate=None, transaction_due_date=None):
         """
 
 
@@ -123,8 +123,7 @@ class BankAccount(object):
         :param bank_code:
         :param bic:
         :param country:
-        :param mandate_id:
-        :param mandate_date_of_signature:
+        :param mandate:
         :param transaction_due_date:
         """
         self.holder = holder
@@ -134,8 +133,7 @@ class BankAccount(object):
         self.bank_code = bank_code
         self.bic = bic
         self.country = country
-        self.mandate_id = mandate_id
-        self.mandate_date_of_signature = mandate_date_of_signature
+        self.mandate = mandate
         self.transaction_due_date = transaction_due_date
 
     def to_params(self):
@@ -146,8 +144,8 @@ class BankAccount(object):
                 "bankAccount.bankCode": self.bank_code,
                 "bankAccount.bic": self.bic,
                 "bankAccount.country": self.country,
-                "bankAccount.mandate.id": self.mandate_id,
-                "bankAccount.mandate.dateOfSignature": self.mandate_date_of_signature,
+                "bankAccount.mandate.id": self.mandate.id,
+                "bankAccount.mandate.dateOfSignature": self.mandate.date_of_signature,
                 "transactionDueDate": self.transaction_due_date}
 
     @staticmethod
@@ -156,8 +154,7 @@ class BankAccount(object):
             return BankAccount(holder=params.get('holder'), bank_name=params.get('bankName'),
                                number=params.get('number'),
                                iban=params.get('iban'), bank_code=params.get('bankCode'), bic=params.get('bic'),
-                               country=params.get('country'), mandate_id=params.get('mandate.id'),
-                               mandate_date_of_signature=params.get('mandate.dateOfSignature'),
+                               country=params.get('country'), mandate=Mandate.from_params(params.get('mandate')),
                                transaction_due_date=params.get('transactionDueDate'))
 
 
@@ -218,7 +215,7 @@ class Customer(object):
                             company_name=params.get('companyName'),
                             identification_doc_type=params.get('identificationDocType'),
                             identification_doc_id=params.get('identificationDocId'),
-                            customer_ip=params.get('customer.ip'))
+                            customer_ip=params.get('ip'))
 
 
 class BillingAddress(object):
@@ -295,7 +292,7 @@ class ShippingAddress(object):
     @staticmethod
     def from_params(params):
         if params is not None:
-            return BillingAddress(given_name=params.get('givenName'), surname=params.get('surname'),
+            return ShippingAddress(given_name=params.get('givenName'), surname=params.get('surname'),
                                   street1=params.get('street1'), street2=params.get('street2'), city=params.get('city'),
                                   state=params.get('state'),
                                   postcode=params.get('postcode'), country=params.get('country'))
@@ -435,12 +432,12 @@ class CustomParameters(object):
         :param name:
         """
         for key, value in kwargs.iteritems():
-            self.key = value
+            self.__dict__.update({key: value})
 
     def to_params(self):
         params = {}
         for key, value in self.__dict__.iteritems():
-            params.update({"customParameters[{0}]".format(key): value})
+            params.update({"customParameters[SHOPPER_{0}]".format(key): value})
         return params
 
 
@@ -481,6 +478,16 @@ class Merchant(object):
         if params is not None:
             return Merchant(bank_account=BankAccount.from_params(params.get('bankAccount')))
 
+
+class Mandate(object):
+    def __init__(self, id=None, date_of_signature=None):
+        self.id = id
+        self.date_of_signature = date_of_signature
+
+    @staticmethod
+    def from_params(params):
+        if params is not None:
+            return Mandate(id=params.get('id'), date_of_signature=params.get('dateOfSignature'))
 
 class Parameter(object):
     def __init__(self, name, value):
@@ -552,8 +559,8 @@ class ResponseParameters(object):
             virtual_account = VirtualAccount.from_params(params.get('virtualAccount'))
             bank_account = BankAccount.from_params(params.get('bankAccount'))
             customer = Customer.from_params(params.get('customer')),
-            billing_address = BillingAddress.from_params(params.get('billingAddress'))
-            shipping_address = ShippingAddress.from_params(params.get('shippingAddress'))
+            billing_address = BillingAddress.from_params(params.get('billing'))
+            shipping_address = ShippingAddress.from_params(params.get('shipping'))
             cart = Cart.from_params(params.get('cart'))
             merchant = Merchant.from_params(params.get('merchant'))
             redirect = Redirect.from_params(params.get('redirect'))
