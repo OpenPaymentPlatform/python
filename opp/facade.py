@@ -82,9 +82,9 @@ class CardAccount(object):
     @staticmethod
     def from_params(params):
         if params is not None:
-            return CardAccount(holder=params.get('holder'), number=params.get('number'),
-                               expiry_month=params.get('expiryMonth'), expiry_year=params.get('expiryYear'),
-                               cvv=params.get('cvv'))
+            return CardAccount(holder=params.get('card.holder'), number=params.get('card.number'),
+                               expiry_month=params.get('card.expiryMonth'), expiry_year=params.get('card.expiryYear'),
+                               cvv=params.get('card.cvv'))
 
 
 class VirtualAccount(object):
@@ -106,7 +106,7 @@ class VirtualAccount(object):
     @staticmethod
     def from_params(params):
         if params is not None:
-            return VirtualAccount(account_id=params.get('accountId'), password=params.get('password'))
+            return VirtualAccount(account_id=params.get('virtualAccount.accountId'), password=params.get('virtualAccount.password'))
 
 
 class BankAccount(object):
@@ -153,11 +153,11 @@ class BankAccount(object):
     @staticmethod
     def from_params(params):
         if params is not None:
-            return BankAccount(holder=params.get('holder'), bank_name=params.get('bankName'),
-                               number=params.get('number'),
-                               iban=params.get('iban'), bank_code=params.get('bankCode'), bic=params.get('bic'),
-                               country=params.get('country'), mandate_id=params.get('mandate.id'),
-                               mandate_date_of_signature=params.get('mandate.dateOfSignature'),
+            return BankAccount(holder=params.get('bankAccount.holder'), bank_name=params.get('bankAccount.bankName'),
+                               number=params.get('bankAccount.number'),
+                               iban=params.get('bankAccount.iban'), bank_code=params.get('bankAccount.bankCode'), bic=params.get('bankAccount.bic'),
+                               country=params.get('bankAccount.country'), mandate_id=params.get('bankAccount.mandate.id'),
+                               mandate_date_of_signature=params.get('bankAccount.mandate.dateOfSignature'),
                                transaction_due_date=params.get('transactionDueDate'))
 
 
@@ -212,12 +212,12 @@ class Customer(object):
     @staticmethod
     def from_params(params):
         if params is not None:
-            return Customer(merchant_customer_id=params.get('merchantCustomerId'), given_name=params.get('givenName'),
-                            surname=params.get('surname'), sex=params.get('sex'), birth_date=params.get('birthDate'),
-                            phone=params.get('phone'), mobile=params.get('mobile'), email=params.get('email'),
-                            company_name=params.get('companyName'),
-                            identification_doc_type=params.get('identificationDocType'),
-                            identification_doc_id=params.get('identificationDocId'),
+            return Customer(merchant_customer_id=params.get('customer.merchantCustomerId'), given_name=params.get('customer.givenName'),
+                            surname=params.get('customer.surname'), sex=params.get('customer.sex'), birth_date=params.get('customer.birthDate'),
+                            phone=params.get('customer.phone'), mobile=params.get('customer.mobile'), email=params.get('customer.email'),
+                            company_name=params.get('customer.companyName'),
+                            identification_doc_type=params.get('customer.identificationDocType'),
+                            identification_doc_id=params.get('customer.identificationDocId'),
                             customer_ip=params.get('customer.ip'))
 
 
@@ -252,9 +252,9 @@ class BillingAddress(object):
     @staticmethod
     def from_params(params):
         if params is not None:
-            return BillingAddress(street1=params.get('street1'), street2=params.get('street2'), city=params.get('city'),
-                                  state=params.get('state'), postcode=params.get('postcode'),
-                                  country=params.get('country'))
+            return BillingAddress(street1=params.get('billing.street1'), street2=params.get('billing.street2'), city=params.get('billing.city'),
+                                  state=params.get('billing.state'), postcode=params.get('billing.postcode'),
+                                  country=params.get('billing.country'))
 
 
 class ShippingAddress(object):
@@ -295,10 +295,10 @@ class ShippingAddress(object):
     @staticmethod
     def from_params(params):
         if params is not None:
-            return BillingAddress(given_name=params.get('givenName'), surname=params.get('surname'),
-                                  street1=params.get('street1'), street2=params.get('street2'), city=params.get('city'),
-                                  state=params.get('state'),
-                                  postcode=params.get('postcode'), country=params.get('country'))
+            return ShippingAddress(given_name=params.get('shipping.givenName'), surname=params.get('shipping.surname'),
+                                  street1=params.get('shipping.street1'), street2=params.get('shipping.street2'), city=params.get('shipping.city'),
+                                  state=params.get('shipping.state'),
+                                  postcode=params.get('shipping.postcode'), country=params.get('shipping.country'))
 
 
 class Item(object):
@@ -469,7 +469,7 @@ class Result(object):
     @staticmethod
     def from_params(params):
         if params is not None:
-            return Result(code=params.get('code'), description=params.get('description'))
+            return Result(code=params.get('result.code'), description=params.get('result.description'))
 
 
 class Merchant(object):
@@ -479,7 +479,7 @@ class Merchant(object):
     @staticmethod
     def from_params(params):
         if params is not None:
-            return Merchant(bank_account=BankAccount.from_params(params.get('bankAccount')))
+            return Merchant(bank_account=BankAccount.from_params(params))
 
 
 class Parameter(object):

@@ -8,7 +8,7 @@ import tests.test_data_utils
 import opp.facade
 
 
-class TestsFacade(unittest.TestCase):
+class TestToParams(unittest.TestCase):
     def test_authentication_to_params(self):
         expected_parameters = tests.test_data_utils.authentication
         result_parameters = opp.facade.Authentication(user_id="8a8294174b7ecb28014b9699220015cc", password="sy6KJsT8",
@@ -118,11 +118,6 @@ class TestsFacade(unittest.TestCase):
         self.assertEqual(expected_parameters, result_parameters)
 
     def test_cart_to_params(self):
-        item_object = opp.facade.Item(name="T-shirt", merchant_item_id="1a2b3c4d5e6f7g8h9i", quantity="1",
-                                      item_type="XL",
-                                      price="5", currency="EUR",
-                                      description="Summer", tax="0.25", shipping="1",
-                                      discount="5")
         expected_parameters = {"cart.items[0].name": "T-shirt",
                                "cart.items[0].merchantItemId": "1a2b3c4d5e6f7g8h9i",
                                "cart.items[0].quantity": "1",
@@ -133,6 +128,11 @@ class TestsFacade(unittest.TestCase):
                                "cart.items[0].tax": "0.25",
                                "cart.items[0].shipping": "1",
                                "cart.items[0].discount": "5"}
+        item_object = opp.facade.Item(name="T-shirt", merchant_item_id="1a2b3c4d5e6f7g8h9i", quantity="1",
+                                      item_type="XL",
+                                      price="5", currency="EUR",
+                                      description="Summer", tax="0.25", shipping="1",
+                                      discount="5")
         list_of_items = [item_object]
         result_parameters = opp.facade.Cart(list_of_items).to_params()
         self.assertEqual(expected_parameters, result_parameters)
