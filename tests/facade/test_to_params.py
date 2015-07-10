@@ -129,7 +129,7 @@ class TestToParams(unittest.TestCase):
                                "cart.items[0].shipping": "1",
                                "cart.items[0].discount": "5"}
         item_object = opp.facade.Item(name="T-shirt", merchant_item_id="1a2b3c4d5e6f7g8h9i", quantity="1",
-                                      item_type="XL",
+                                      type="XL",
                                       price="5", currency="EUR",
                                       description="Summer", tax="0.25", shipping="1",
                                       discount="5")
@@ -144,7 +144,7 @@ class TestToParams(unittest.TestCase):
 
     def test_recurring_to_params(self):
         expected_parameters = {"recurringType": "INITIAL"}
-        result_parameters = opp.facade.Recurring(recurr_type="INITIAL").to_params()
+        result_parameters = opp.facade.Recurring(type="INITIAL").to_params()
         self.assertEqual(expected_parameters, result_parameters)
 
     def test_threed_secure_to_params(self):
