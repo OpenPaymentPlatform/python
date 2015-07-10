@@ -181,14 +181,14 @@ class TestFromParams(unittest.TestCase):
     def test_merchant_from_params(self):
         bank_account_parameters = {"bankAccount": {"holder": "Jane Jones",
                                                    "number": "1009534785",
-                                                   "bic": "DEUTDEFF",
+                                                   "iban": "DE23100000001234567890",
                                                    "country": "DE"
                                                    }
                                    }
         merchant = opp.facade.Merchant.from_params(bank_account_parameters)
         self.assertEqual(merchant.bank_account.holder, "Jane Jones")
         self.assertEqual(merchant.bank_account.number, "1009534785")
-        self.assertEqual(merchant.bank_account.bic, "DEUTDEFF")
+        self.assertEqual(merchant.bank_account.iban, "DE23100000001234567890")
         self.assertEqual(merchant.bank_account.country, "DE")
 
     def test_mandate_from_params(self):
@@ -266,7 +266,7 @@ class TestFromParams(unittest.TestCase):
                                    "bankAccount": {
                                        "holder": "merchantName",
                                        "number": "15300",
-                                       "iban": "TRUE",
+                                       "iban": "DE23100000001234567890",
                                        "country": "BR"
                                    }
                                },
@@ -282,13 +282,41 @@ class TestFromParams(unittest.TestCase):
                                    "country": "BR"
                                },
                                "shipping": {
-                                   "given_name": "Jane",
+                                   "givenName": "Jane",
                                    "surname": "Jones",
-                                   "street1": "Amazonstda",
-                                   "city": "Brasilia",
-                                   "state": "DE",
-                                   "postcode": "12345678",
+                                   "street1": "Riostda",
+                                   "city": "Rio de Janeiro",
+                                   "state": "FE",
+                                   "postcode": "12345698",
                                    "country": "BR"
+                               },
+                               "cart": {
+                                   "items": [
+                                       {
+                                           "name": "T-shirt",
+                                           "merchantItemId": "1a2b3c4d5e6f7g8h9i",
+                                           "quantity": "1",
+                                           "type": "XL",
+                                           "price": "5",
+                                           "currency": "EUR",
+                                           "description": "Summer",
+                                           "tax": "0.25",
+                                           "shipping": "1",
+                                           "discount": "5"
+                                       },
+                                       {
+                                           "name": "FIFA16",
+                                           "merchantItemId": "2b3c4d5e6f7g8h9i1a",
+                                           "quantity": "1",
+                                           "type": "PS4",
+                                           "price": "55",
+                                           "currency": "EUR",
+                                           "description": "New",
+                                           "tax": "0.25",
+                                           "shipping": "1",
+                                           "discount": "5"
+                                       }
+                                   ]
                                },
                                "customParameters": {
                                    "BRADESCO_cpfsacado": "11111111111"
@@ -299,6 +327,10 @@ class TestFromParams(unittest.TestCase):
                                        {
                                            "name": "cdk10",
                                            "value": "0AWe9qIp0v8pXrJtFrxF+w=="
+                                       },
+                                       {
+                                           "name": "cdk6",
+                                           "value": "lxJCnzrEzeM="
                                        }
                                    ]
                                },
@@ -308,7 +340,70 @@ class TestFromParams(unittest.TestCase):
                                }
         response = opp.facade.ResponseParameters.from_params(response_parameters)
         self.assertEqual(response.id, "8a8294494e735cfa014e763863a80add")
+        self.assertEqual(response.payment_type, "PA")
+        self.assertEqual(response.payment_brand, "BOLETO")
+        self.assertEqual(response.amount, "1.03")
+        self.assertEqual(response.descriptor, "2203.5434.7682 OPP_Channel")
+        self.assertEqual(response.result.code, "000.100.112")
+        self.assertEqual(response.result.description, "Request successfully processed in 'Merchant in Connector Test Mode'")
+        self.assertEqual(response.card_account.number, "377777777777770")
+        self.assertEqual(response.card_account.holder, "Jane Jones")
+        self.assertEqual(response.card_account.expiry_month, "05")
+        self.assertEqual(response.card_account.expiry_year, "2018")
+        self.assertEqual(response.card_account.cvv, "1234")
+        self.assertEqual(response.virtual_account.account_id, "1a2b3c4d5e6f7g8h9i")
+        self.assertEqual(response.virtual_account.password, "sy6KJsT8")
+        self.assertEqual(response.bank_account.holder, "Jane Jones")
+        self.assertEqual(response.bank_account.bank_name, "Deutsche Bank")
+        self.assertEqual(response.bank_account.iban, "DE23100000001234567890")
+        self.assertEqual(response.bank_account.bank_code, "DEUTDEMM")
+        self.assertEqual(response.bank_account.bic, "DEUTDEFF")
+        self.assertEqual(response.bank_account.country, "DE")
+        self.assertEqual(response.bank_account.mandate.id, "1a2b3c4d5e6f7g8h9i")
+        self.assertEqual(response.bank_account.mandate.date_of_signature, "2015-07-09")
+        self.assertEqual(response.bank_account.transaction_due_date, "2015-07-09")
+        self.assertEqual(response.customer.given_name, "Braziliano")
+        self.assertEqual(response.customer.surname, "Babtiste")
         self.assertEqual(response.billing_address.street1, "Amazonstda")
         self.assertEqual(response.billing_address.city, "Brasilia")
         self.assertEqual(response.billing_address.state, "DE")
         self.assertEqual(response.billing_address.postcode, "12345678")
+        self.assertEqual(response.billing_address.country, "BR")
+        self.assertEqual(response.shipping_address.given_name, "Jane")
+        self.assertEqual(response.shipping_address.surname, "Jones")
+        self.assertEqual(response.shipping_address.street1, "Riostda")
+        self.assertEqual(response.shipping_address.city, "Rio de Janeiro")
+        self.assertEqual(response.shipping_address.state, "FE")
+        self.assertEqual(response.shipping_address.postcode, "12345698")
+        self.assertEqual(response.shipping_address.country, "BR")
+        self.assertEqual(response.cart.items[0].name, "T-shirt")
+        self.assertEqual(response.cart.items[0].merchant_item_id, "1a2b3c4d5e6f7g8h9i")
+        self.assertEqual(response.cart.items[0].quantity, "1")
+        self.assertEqual(response.cart.items[0].type, "XL")
+        self.assertEqual(response.cart.items[0].price, "5")
+        self.assertEqual(response.cart.items[0].currency, "EUR")
+        self.assertEqual(response.cart.items[0].description, "Summer")
+        self.assertEqual(response.cart.items[0].tax, "0.25")
+        self.assertEqual(response.cart.items[0].shipping, "1")
+        self.assertEqual(response.cart.items[0].discount, "5")
+        self.assertEqual(response.cart.items[1].name, "FIFA16")
+        self.assertEqual(response.cart.items[1].merchant_item_id, "2b3c4d5e6f7g8h9i1a")
+        self.assertEqual(response.cart.items[1].quantity, "1")
+        self.assertEqual(response.cart.items[1].type, "PS4")
+        self.assertEqual(response.cart.items[1].price, "55")
+        self.assertEqual(response.cart.items[1].currency, "EUR")
+        self.assertEqual(response.cart.items[1].description, "New")
+        self.assertEqual(response.cart.items[1].tax, "0.25")
+        self.assertEqual(response.cart.items[1].shipping, "1")
+        self.assertEqual(response.cart.items[1].discount, "5")
+        self.assertEqual(response.merchant.bank_account.holder, "merchantName")
+        self.assertEqual(response.merchant.bank_account.number, "15300")
+        self.assertEqual(response.merchant.bank_account.iban, "DE23100000001234567890")
+        self.assertEqual(response.merchant.bank_account.country, "BR")
+        self.assertEqual(response.redirect.parameters[0].name, "cdk10")
+        self.assertEqual(response.redirect.parameters[0].value, "0AWe9qIp0v8pXrJtFrxF+w==")
+        self.assertEqual(response.redirect.parameters[1].name, "cdk6")
+        self.assertEqual(response.redirect.parameters[1].value, "lxJCnzrEzeM=")
+        self.assertEqual(response.build_number, "20150707-105209.r185912.opp-tags-20150709_lr")
+        self.assertEqual(response.timestamp, "2015-07-10 04:28:03+0000")
+        self.assertEqual(response.ndc, "8a8294174b7ecb28014b9699220015ca_8a102b3e46974c83bbeb0bfc62a9518e")
