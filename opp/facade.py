@@ -2,6 +2,9 @@
 __author__ = 'PAY.ON'
 import opp.core
 import opp.utils
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class Authentication(object):
