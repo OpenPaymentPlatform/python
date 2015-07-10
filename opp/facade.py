@@ -562,7 +562,10 @@ class ResponseParameters(object):
             customer = Customer.from_params(params.get('customer'))
             billing_address = BillingAddress.from_params(params.get('billing'))
             shipping_address = ShippingAddress.from_params(params.get('shipping'))
-            cart = Cart.from_params(params.get('cart').get('items'))
+            if params.get('cart') is not None:
+                cart = Cart.from_params(params.get('cart').get('items'))
+            else:
+                cart = None
             merchant = Merchant.from_params(params.get('merchant'))
             redirect = Redirect.from_params(params.get('redirect'))
             timestamp = params.get('timestamp')
