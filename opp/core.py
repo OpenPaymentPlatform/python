@@ -1,20 +1,13 @@
 # coding=utf-8
 __author__ = 'PAY.ON'
 from requests import Session
-import logging
 import opp.config
-# these two lines enable debugging at httplib level (requests->urllib3->httplib)
-# you will see the REQUEST, including HEADERS and DATA, and RESPONSE with HEADERS but without DATA.
-# the only thing missing will be the response.body which is not logged.
 from six.moves import http_client
+import logging
 
-http_client.HTTPConnection.debuglevel = 1
+logger = logging.getLogger(__name__)
 
-logging.basicConfig()  # you need to initialize logging, otherwise you will not see anything from requests
-logging.getLogger().setLevel(logging.INFO)
-requests_log = logging.getLogger("requests.packages.urllib3")
-requests_log.setLevel(logging.DEBUG)
-requests_log.propagate = True
+http_client.HTTPConnection.debuglevel = opp.config.HTTP_DEBUG_MODE
 
 
 class Utils(object):
@@ -106,10 +99,11 @@ class API(object):
 class HTTPClient(object):
     def __init__(self, base_url, auth_params):
         """Initialize a new opp connection. Requires user name and password."""
+        logger.debug("START: OPP API connection with BASE_URL:{0} and AUTH_PARAMS: {1}".format(base_url,
+                                                                                               auth_params))
         self.base_url = base_url
         self.session = Session()
         self.session.verify = opp.config.config.ssl_verify
-        # self.session.auth = (user_name, "")
         self.auth_params = auth_params
         self.operations = dict(GET=self.get, POST=self.post, PUT=self.put, DELETE=self.delete)
         # for internal usage
@@ -133,9 +127,16 @@ class HTTPClient(object):
         if self.auth_params:
             params.update(self.auth_params)
         try:
-            return self.operations[request_type](params, url, return_type)
+            result = self.operations[request_type](params, url, return_type)
+            logger.debug("SUCCESS: OPP API REQUEST_TYPE {0} with PARAMS:{1} -> RESPONSE: {2} ".format(request_type,
+                                                                                                      params,
+                                                                                                      self.response))
+            return result
         except ValueError as v:
             # JSON encoding failed
+            logger.debug("ERROR: OPP API REQUEST_TYPE {0} with PARAMS {1} -> RESPONSE {2} TRACE {3}".
+                         format(request_type, params, self.response, v))
+
             if self.response is not None:
                 raise ValueError(self.response.content, self.response.status_code)
             else:
@@ -209,10 +210,13 @@ class HTTPClient(object):
         if json_data:
             # success
             if isinstance(json_data, dict):
+                logger.debug("JSON->Python DESERIALIZATION FROM {0} TO {1}".format(json_data, dict(json_data)))
                 return dict(json_data)
             elif isinstance(json_data, list):
+                logger.debug("JSON->Python DESERIALIZATION FROM {0} TO {1}".format(json_data, list(json_data)))
                 return list(json_data)
             else:
+                logger.debug("JSON->Python DESERIALIZATION FROM {0} TO {1}".format(json_data, str(json_data)))
                 return str(json_data)
         else:
             # error
