@@ -3,7 +3,7 @@ __author__ = 'PAY.ON'
 import opp.core
 import opp.utils
 import logging
-
+import six
 logger = logging.getLogger(__name__)
 
 
@@ -359,7 +359,7 @@ class Cart(object):
         params = {}
         count = 0
         for item in self.items:
-            for k, v in item.to_params().iteritems():
+            for k, v in six.iteritems(item.to_params()):
                 key_str = "cart.items[{0}].{1}".format(count, k)
                 value_str = "{0}".format(v)
                 d = {key_str: value_str}
@@ -434,12 +434,12 @@ class CustomParameters(object):
         :rtype : object
         :param name:
         """
-        for key, value in kwargs.iteritems():
+        for key, value in six.iteritems(kwargs):
             self.__dict__.update({key: value})
 
     def to_params(self):
         params = {}
-        for key, value in self.__dict__.iteritems():
+        for key, value in six.iteritems(self.__dict__):
             params.update({"customParameters[SHOPPER_{0}]".format(key): value})
         return params
 

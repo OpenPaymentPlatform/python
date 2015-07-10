@@ -63,8 +63,7 @@ class TestToParams(unittest.TestCase):
         result_parameters = opp.facade.BankAccount(holder="Jane Jones", bank_name="Deutsche Bank", number="1009534785",
                                                    iban="DE23100000001234567890", bank_code="DEUTDEMM", bic="DEUTDEFF",
                                                    country="DE",
-                                                   mandate_id="1a2b3c4d5e6f7g8h9i",
-                                                   mandate_date_of_signature="2015-07-09",
+                                                   mandate=opp.facade.Mandate(id='1a2b3c4d5e6f7g8h9i', date_of_signature='2015-07-09'),
                                                    transaction_due_date="2015-07-09").to_params()
         self.assertEqual(expected_parameters, result_parameters)
 
