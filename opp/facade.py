@@ -2,6 +2,9 @@
 __author__ = 'PAY.ON'
 import opp.core
 import opp.utils
+import logging
+import six
+logger = logging.getLogger(__name__)
 
 
 class Authentication(object):
@@ -356,7 +359,7 @@ class Cart(object):
         params = {}
         count = 0
         for item in self.items:
-            for k, v in item.to_params().iteritems():
+            for k, v in six.iteritems(item.to_params()):
                 key_str = "cart.items[{0}].{1}".format(count, k)
                 value_str = "{0}".format(v)
                 d = {key_str: value_str}
@@ -430,12 +433,12 @@ class CustomParameters(object):
         :rtype : object
         :param name:
         """
-        for key, value in kwargs.iteritems():
+        for key, value in six.iteritems(kwargs):
             self.__dict__.update({key: value})
 
     def to_params(self):
         params = {}
-        for key, value in self.__dict__.iteritems():
+        for key, value in six.iteritems(self.__dict__):
             params.update({"customParameters[SHOPPER_{0}]".format(key): value})
         return params
 
@@ -606,11 +609,13 @@ def merge_inputs_to_dict(*args):
 
 class Captures(object):
     def __init__(self, payment_id=None, core=None):
+        self.core = core
         self.captures = core.payments(payment_id=payment_id)
 
     def create(self, basic_payment=BasicPayment()):
-        basic_payment.update({"paymentType": "CP"})
-        response = self.captures.create(**basic_payment.to_params())
+        params = basic_payment.to_params()
+        params.update({"paymentType": "CP"})
+        response = self.captures.create(**params)
         ErrorUtils.raise_exception_for_error_code(self.core.http_client.response.status_code, response)
         return opp.facade.ResponseParameters.from_params(response)
 
@@ -624,8 +629,9 @@ class Refunds(object):
         self.refunds = core.payments(payment_id=payment_id)
 
     def create(self, basic_payment=BasicPayment()):
-        basic_payment.update({"paymentType": "RF"})
-        response = self.refunds.create(**basic_payment.to_params())
+        params = basic_payment.to_params()
+        params.update({"paymentType": "RF"})
+        response = self.refunds.create(**params)
         ErrorUtils.raise_exception_for_error_code(self.core.http_client.response.status_code, response)
         return opp.facade.ResponseParameters.from_params(response)
 
@@ -713,7 +719,7 @@ class Checkouts(object):
     def __init__(self, checkout_id=None, core=None):
         self.checkouts = core.checkouts(checkout_id=checkout_id)
 
-    def create(self, basic_payment=None):
+    def create(self, basic_payment=BasicPayment()):
         response = self.checkouts.create(**basic_payment.to_params())
         ErrorUtils.raise_exception_for_error_code(self.core.http_client.response.status_code, response)
         return opp.facade.ResponseParameters.from_params(response)
