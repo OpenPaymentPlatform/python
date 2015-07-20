@@ -11,7 +11,7 @@ from setuptools import setup
 
 setup(
     name='opp',
-    version='0.9.0',
+    version='1.0.0',
     description='Python wrapper for OPP',
     author='PAY.ON',
     author_email='opp@payon.com',
@@ -19,7 +19,7 @@ setup(
     license='MIT',
     packages=['opp'],
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
         'Operating System :: OS Independent',
@@ -30,5 +30,5 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
     install_requires=install_requires,
-    download_url='https://github.com/OpenPaymentPlatform/python/tarball/0.9.0'
+    download_url='https://github.com/OpenPaymentPlatform/python/tarball/1.0.0'
 )
