@@ -427,19 +427,23 @@ class ThreeDSecure(object):
 
 
 class CustomParameters(object):
-    def __init__(self, **kwargs):
+    def __init__(self, use_shopper_prefix=True, **kwargs):
         """
+        :param use_shopper_prefix: whether "SHOPPER_" prefix should be used or not for parameters names
         :param kwargs:
         :rtype : object
         :param name:
         """
+        self.use_shopper_prefix = use_shopper_prefix
         for key, value in six.iteritems(kwargs):
             self.__dict__.update({key: value})
 
     def to_params(self):
         params = {}
+        prefix = 'SHOPPER_' if self.use_shopper_prefix else ''
+        self.__dict__.pop('use_shopper_prefix')
         for key, value in six.iteritems(self.__dict__):
-            params.update({"customParameters[SHOPPER_{0}]".format(key): value})
+            params.update({"customParameters[{prefix}{key}]".format(prefix=prefix, key=key): value})
         return params
 
 
