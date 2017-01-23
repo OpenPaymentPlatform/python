@@ -336,7 +336,13 @@ class TestFromParams(unittest.TestCase):
                                },
                                "buildNumber": "20150707-105209.r185912.opp-tags-20150709_lr",
                                "timestamp": "2015-07-10 04:28:03+0000",
-                               "ndc": "8a8294174b7ecb28014b9699220015ca_8a102b3e46974c83bbeb0bfc62a9518e"
+                               "ndc": "8a8294174b7ecb28014b9699220015ca_8a102b3e46974c83bbeb0bfc62a9518e",
+                               "resultDetails": {
+                                   "ConnectorTxID1": "8a8393c259876e841989ab6f4da1408d",
+                                   "ConnectorTxID2": "614486",
+                                   "ConnectorTxID3": "827428|||74301731986",
+                                   "clearingInstituteName": "Some Institute",
+                               }
                                }
         response = opp.facade.ResponseParameters.from_params(response_parameters)
         self.assertEqual(response.id, "8a8294494e735cfa014e763863a80add")
@@ -407,3 +413,7 @@ class TestFromParams(unittest.TestCase):
         self.assertEqual(response.build_number, "20150707-105209.r185912.opp-tags-20150709_lr")
         self.assertEqual(response.timestamp, "2015-07-10 04:28:03+0000")
         self.assertEqual(response.ndc, "8a8294174b7ecb28014b9699220015ca_8a102b3e46974c83bbeb0bfc62a9518e")
+        self.assertEqual(response.result_details["ConnectorTxID1"], "8a8393c259876e841989ab6f4da1408d")
+        self.assertEqual(response.result_details["ConnectorTxID2"], "614486")
+        self.assertEqual(response.result_details["ConnectorTxID3"], "827428|||74301731986")
+        self.assertEqual(response.result_details["clearingInstituteName"], "Some Institute")

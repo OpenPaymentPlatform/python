@@ -161,6 +161,14 @@ class TestToParams(unittest.TestCase):
         result_parameters = opp.facade.CustomParameters(number_of_installments='3', trial_period_days='10').to_params()
         self.assertEqual(expected_parameters, result_parameters)
 
+    def test_custom_parameters_to_params_without_shopper_prefix(self):
+        expected_parameters = {"customParameters[number_of_installments]": "3",
+                               "customParameters[trial_period_days]": "10"
+                               }
+        result_parameters = opp.facade.CustomParameters(number_of_installments='3', trial_period_days='10',
+                                                        use_shopper_prefix=False).to_params()
+        self.assertEqual(expected_parameters, result_parameters)
+
     def test_asynchronous_payments_to_params(self):
         expected_parameters = {"shopperResultUrl": "http://shopperurl.com",
                                "notificationUrl": "http://notificationurl.com"

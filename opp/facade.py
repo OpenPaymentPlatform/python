@@ -427,19 +427,23 @@ class ThreeDSecure(object):
 
 
 class CustomParameters(object):
-    def __init__(self, **kwargs):
+    def __init__(self, use_shopper_prefix=True, **kwargs):
         """
+        :param use_shopper_prefix: whether "SHOPPER_" prefix should be used or not for parameters names
         :param kwargs:
         :rtype : object
         :param name:
         """
+        self.use_shopper_prefix = use_shopper_prefix
         for key, value in six.iteritems(kwargs):
             self.__dict__.update({key: value})
 
     def to_params(self):
         params = {}
+        prefix = 'SHOPPER_' if self.use_shopper_prefix else ''
+        self.__dict__.pop('use_shopper_prefix')
         for key, value in six.iteritems(self.__dict__):
-            params.update({"customParameters[SHOPPER_{0}]".format(key): value})
+            params.update({"customParameters[{prefix}{key}]".format(prefix=prefix, key=key): value})
         return params
 
 
@@ -523,7 +527,7 @@ class ResponseParameters(object):
     def __init__(self, id=None, payment_type=None, payment_brand=None, amount=None, currency=None, descriptor=None,
                  result=None, card_account=None, virtual_account=None, bank_account=None, customer=None,
                  billing_address=None, shipping_address=None, cart=None, merchant=None, redirect=None,
-                 timestamp=None, build_number=None, ndc=None):
+                 timestamp=None, build_number=None, ndc=None, result_details=None):
         self.id = id
         self.payment_type = payment_type
         self.payment_brand = payment_brand
@@ -543,6 +547,7 @@ class ResponseParameters(object):
         self.timestamp = timestamp
         self.build_number = build_number
         self.ndc = ndc
+        self.result_details = result_details
 
     @staticmethod
     def from_params(params):
@@ -571,6 +576,7 @@ class ResponseParameters(object):
             timestamp = params.get('timestamp')
             build_number = params.get('buildNumber')
             ndc = params.get('ndc')
+            result_details = params.get('resultDetails')
             response_params = ResponseParameters(id=id, payment_type=payment_type, payment_brand=payment_brand,
                                                  amount=amount, currency=currency, descriptor=descriptor,
                                                  result=result, card_account=card_account,
@@ -578,7 +584,7 @@ class ResponseParameters(object):
                                                  bank_account=bank_account, customer=customer,
                                                  billing_address=billing_address, shipping_address=shipping_address,
                                                  cart=cart, merchant=merchant, redirect=redirect, timestamp=timestamp,
-                                                 build_number=build_number, ndc=ndc)
+                                                 build_number=build_number, ndc=ndc, result_details=result_details)
 
             return response_params
 
