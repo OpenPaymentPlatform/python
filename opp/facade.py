@@ -465,14 +465,17 @@ class AsynchronousPayments(object):
 
 
 class Result(object):
-    def __init__(self, code=None, description=None):
+    def __init__(self, code=None, description=None, avs_response=None, cvv_response=None):
         self.code = code
         self.description = description
+        self.avs_response = avs_response
+        self.cvv_response = cvv_response
 
     @staticmethod
     def from_params(params):
         if params is not None:
-            return Result(code=params.get('code'), description=params.get('description'))
+            return Result(code=params.get('code'), description=params.get('description'),
+                avs_response=params.get('avsResponse') , cvv_response=params.get('cvvResponse'))
 
 
 class Merchant(object):

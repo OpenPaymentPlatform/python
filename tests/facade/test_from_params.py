@@ -172,11 +172,15 @@ class TestFromParams(unittest.TestCase):
     def test_result_from_params(self):
         result_with_result_parameters = opp.facade.Result.from_params(
             {"code": "000.100.110",
-             "description": "Request successfully processed"
+             "description": "Request successfully processed",
+             "avsResponse": "Y",
+             "cvvResponse": "M",
              }
         )
         self.assertEqual(result_with_result_parameters.code, "000.100.110")
         self.assertEqual(result_with_result_parameters.description, "Request successfully processed")
+        self.assertEqual(result_with_result_parameters.avs_response, "Y")
+        self.assertEqual(result_with_result_parameters.cvv_response, "M")
 
     def test_merchant_from_params(self):
         bank_account_parameters = {"bankAccount": {"holder": "Jane Jones",
