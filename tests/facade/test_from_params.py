@@ -346,7 +346,8 @@ class TestFromParams(unittest.TestCase):
                                    "ConnectorTxID2": "614486",
                                    "ConnectorTxID3": "827428|||74301731986",
                                    "clearingInstituteName": "Some Institute",
-                               }
+                               },
+                               "registrationId": "8a82944a5dbc8820015dc30fc19e3641"
                                }
         response = opp.facade.ResponseParameters.from_params(response_parameters)
         self.assertEqual(response.id, "8a8294494e735cfa014e763863a80add")
@@ -421,3 +422,4 @@ class TestFromParams(unittest.TestCase):
         self.assertEqual(response.result_details["ConnectorTxID2"], "614486")
         self.assertEqual(response.result_details["ConnectorTxID3"], "827428|||74301731986")
         self.assertEqual(response.result_details["clearingInstituteName"], "Some Institute")
+        self.assertEqual(response.registration_id, "8a82944a5dbc8820015dc30fc19e3641")
