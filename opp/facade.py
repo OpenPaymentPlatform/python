@@ -474,8 +474,10 @@ class Result(object):
     @staticmethod
     def from_params(params):
         if params is not None:
-            return Result(code=params.get('code'), description=params.get('description'),
-                avs_response=params.get('avsResponse') , cvv_response=params.get('cvvResponse'))
+            return Result(
+                code=params.get('code'), description=params.get('description'),
+                avs_response=params.get('avsResponse'), cvv_response=params.get('cvvResponse')
+            )
 
 
 class Merchant(object):
