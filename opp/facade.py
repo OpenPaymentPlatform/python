@@ -474,8 +474,10 @@ class Result(object):
     @staticmethod
     def from_params(params):
         if params is not None:
-            return Result(code=params.get('code'), description=params.get('description'),
-                avs_response=params.get('avsResponse') , cvv_response=params.get('cvvResponse'))
+            return Result(
+                code=params.get('code'), description=params.get('description'),
+                avs_response=params.get('avsResponse'), cvv_response=params.get('cvvResponse')
+            )
 
 
 class Merchant(object):
@@ -659,8 +661,10 @@ class Reversals(object):
         self.core = core
         self.reversals = core.payments(payment_id=payment_id)
 
-    def create(self):
-        response = self.reversals.create(**{"paymentType": "RV"})
+    def create(self, custom_parameters=None):
+        request = merge_inputs_to_dict(custom_parameters)
+        request['paymentType'] = "RV"
+        response = self.reversals.create(**request)
         ErrorUtils.raise_exception_for_error_code(self.core.http_client.response.status_code, response)
         return opp.facade.ResponseParameters.from_params(response)
 
