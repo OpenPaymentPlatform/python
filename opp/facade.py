@@ -736,6 +736,7 @@ class Preauthorizations(object):
 
 class Checkouts(object):
     def __init__(self, checkout_id=None, core=None):
+        self.core = core
         self.checkouts = core.checkouts(checkout_id=checkout_id)
 
     def create(self, basic_payment=BasicPayment()):
@@ -749,6 +750,7 @@ class Checkouts(object):
 
 class Registrations(object):
     def __init__(self, registration_id=None, core=None):
+        self.core = core
         self.registrations = core.registrations(registration_id=registration_id)
 
     def create(self, basic_payment=None, card_account=None):
