@@ -11,7 +11,7 @@ from setuptools import setup
 
 setup(
     name='opp',
-    version='1.3.0',
+    version='1.3.1',
     description='Python wrapper for OPP',
     author='PAY.ON',
     author_email='opp@payon.com',
