@@ -172,11 +172,15 @@ class TestFromParams(unittest.TestCase):
     def test_result_from_params(self):
         result_with_result_parameters = opp.facade.Result.from_params(
             {"code": "000.100.110",
-             "description": "Request successfully processed"
+             "description": "Request successfully processed",
+             "avsResponse": "Y",
+             "cvvResponse": "M",
              }
         )
         self.assertEqual(result_with_result_parameters.code, "000.100.110")
         self.assertEqual(result_with_result_parameters.description, "Request successfully processed")
+        self.assertEqual(result_with_result_parameters.avs_response, "Y")
+        self.assertEqual(result_with_result_parameters.cvv_response, "M")
 
     def test_merchant_from_params(self):
         bank_account_parameters = {"bankAccount": {"holder": "Jane Jones",
@@ -342,7 +346,8 @@ class TestFromParams(unittest.TestCase):
                                    "ConnectorTxID2": "614486",
                                    "ConnectorTxID3": "827428|||74301731986",
                                    "clearingInstituteName": "Some Institute",
-                               }
+                               },
+                               "registrationId": "8a82944a5dbc8820015dc30fc19e3641"
                                }
         response = opp.facade.ResponseParameters.from_params(response_parameters)
         self.assertEqual(response.id, "8a8294494e735cfa014e763863a80add")
@@ -417,3 +422,4 @@ class TestFromParams(unittest.TestCase):
         self.assertEqual(response.result_details["ConnectorTxID2"], "614486")
         self.assertEqual(response.result_details["ConnectorTxID3"], "827428|||74301731986")
         self.assertEqual(response.result_details["clearingInstituteName"], "Some Institute")
+        self.assertEqual(response.registration_id, "8a82944a5dbc8820015dc30fc19e3641")

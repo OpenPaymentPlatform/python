@@ -465,14 +465,19 @@ class AsynchronousPayments(object):
 
 
 class Result(object):
-    def __init__(self, code=None, description=None):
+    def __init__(self, code=None, description=None, avs_response=None, cvv_response=None):
         self.code = code
         self.description = description
+        self.avs_response = avs_response
+        self.cvv_response = cvv_response
 
     @staticmethod
     def from_params(params):
         if params is not None:
-            return Result(code=params.get('code'), description=params.get('description'))
+            return Result(
+                code=params.get('code'), description=params.get('description'),
+                avs_response=params.get('avsResponse'), cvv_response=params.get('cvvResponse')
+            )
 
 
 class Merchant(object):
@@ -527,7 +532,7 @@ class ResponseParameters(object):
     def __init__(self, id=None, payment_type=None, payment_brand=None, amount=None, currency=None, descriptor=None,
                  result=None, card_account=None, virtual_account=None, bank_account=None, customer=None,
                  billing_address=None, shipping_address=None, cart=None, merchant=None, redirect=None,
-                 timestamp=None, build_number=None, ndc=None, result_details=None):
+                 timestamp=None, build_number=None, ndc=None, result_details=None, registration_id=None):
         self.id = id
         self.payment_type = payment_type
         self.payment_brand = payment_brand
@@ -548,6 +553,7 @@ class ResponseParameters(object):
         self.build_number = build_number
         self.ndc = ndc
         self.result_details = result_details
+        self.registration_id = registration_id
 
     @staticmethod
     def from_params(params):
@@ -577,6 +583,7 @@ class ResponseParameters(object):
             build_number = params.get('buildNumber')
             ndc = params.get('ndc')
             result_details = params.get('resultDetails')
+            registration_id = params.get('registrationId')
             response_params = ResponseParameters(id=id, payment_type=payment_type, payment_brand=payment_brand,
                                                  amount=amount, currency=currency, descriptor=descriptor,
                                                  result=result, card_account=card_account,
@@ -584,7 +591,8 @@ class ResponseParameters(object):
                                                  bank_account=bank_account, customer=customer,
                                                  billing_address=billing_address, shipping_address=shipping_address,
                                                  cart=cart, merchant=merchant, redirect=redirect, timestamp=timestamp,
-                                                 build_number=build_number, ndc=ndc, result_details=result_details)
+                                                 build_number=build_number, ndc=ndc, result_details=result_details,
+                                                 registration_id=registration_id)
 
             return response_params
 
@@ -653,8 +661,10 @@ class Reversals(object):
         self.core = core
         self.reversals = core.payments(payment_id=payment_id)
 
-    def create(self):
-        response = self.reversals.create(**{"paymentType": "RV"})
+    def create(self, custom_parameters=None):
+        request = merge_inputs_to_dict(custom_parameters)
+        request['paymentType'] = "RV"
+        response = self.reversals.create(**request)
         ErrorUtils.raise_exception_for_error_code(self.core.http_client.response.status_code, response)
         return opp.facade.ResponseParameters.from_params(response)
 
@@ -726,6 +736,7 @@ class Preauthorizations(object):
 
 class Checkouts(object):
     def __init__(self, checkout_id=None, core=None):
+        self.core = core
         self.checkouts = core.checkouts(checkout_id=checkout_id)
 
     def create(self, basic_payment=BasicPayment()):
@@ -739,6 +750,7 @@ class Checkouts(object):
 
 class Registrations(object):
     def __init__(self, registration_id=None, core=None):
+        self.core = core
         self.registrations = core.registrations(registration_id=registration_id)
 
     def create(self, basic_payment=None, card_account=None):
