@@ -30,5 +30,5 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
     install_requires=install_requires,
-    download_url='https://github.com/OpenPaymentPlatform/python/tarball/1.3.0'
+    download_url='https://github.com/OpenPaymentPlatform/python/tarball/1.3.1'
 )
