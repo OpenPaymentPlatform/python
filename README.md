@@ -232,6 +232,19 @@ logging.basicConfig(level=logging.DEBUG, filename='opp.log')
 ### 1.0.0
 * First version
 
+### 1.1.0
+* Payment custom parameters: option to avoid using the SHOPPER_ prefix
+
+### 1.2.0
+* Add result details in response parameters
+
+### 1.3.1
+* capture avs and cvv responses on the Result object
+* save the registration ID on the response object if provided
+* allow custom params to be sent with reversal requests
+* fix indent on Result
+* set core on Registrations and Checkouts instances
+
 ## License
 
 Copyright 2015 PAY.ON AG.
